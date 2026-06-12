@@ -1,0 +1,86 @@
+﻿@model StudFolio.Models.Post
+
+<div class="modal fade" id="postModal-@Model.PostID" tabindex="-1" aria-labelledby="postModalLabel-@Model.PostID" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 px-4 pt-4">
+                <button type="button" class="btn-icon btn-copy-link"
+                        data-post-id="@Model.PostID"
+                        title="Скопіювати посилання">
+                    <span class="icon-link"></span>
+                </button>
+                <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити">
+                    <span class="icon-dagger"></span>
+                </button>
+            </div>
+            <div class="modal-body px-4 pb-4 d-flex flex-column gap-3">
+
+                @if (!string.IsNullOrEmpty(Model.Preview))
+                {
+                    <img src="@Model.Preview" class="preview" alt="Обкладинка">
+                }
+
+                <p class="d-flex flex-column flex-sm-row column-gap-2 text-muted fs-6">
+                    <span><strong>Тип:</strong> @Model.Type</span>
+                    <span class="d-none d-sm-inline">•</span> 
+                    <span><strong>Опубліковано:</strong> @Model.TimeOfPublication.ToString("dd.MM.yyyy HH:mm")</span>
+                </p>
+
+                @if (Model.User != null)
+                {
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="@(string.IsNullOrEmpty(Model.User.Avatar) ? "/images/profile.svg" : Model.User.Avatar)"
+                             class="rounded-circle border border-primary avatar-icon overflow-hidden"
+                             alt="Аватар користувача" />
+                        <span class="text-secondary">@Model.User.Firstname @Model.User.Lastname</span>
+                    </div>
+                }
+
+                <h2 id="postModalLabel-@Model.PostID">@Model.Title</h2>
+                
+                <p class="post-description fs-5">
+                    @Model.Description
+                </p>
+
+                @if (Model.TechnologiesAndTools != null && Model.TechnologiesAndTools.Any())
+                {
+                    <div>
+                        <h3>Технології та інструменти:</h3>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            @foreach (var tech in Model.TechnologiesAndTools)
+                            {
+                                <span class="done-tile text-secondary">@tech</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Links != null && Model.Links.Any())
+                {
+                    <div>
+                        <h3>Посилання:</h3>
+                        <ul class="list-unstyled d-flex flex-column gap-1 mt-2">
+                            @foreach (var link in Model.Links)
+                            {
+                                <li>
+                                    <a class="text-accent text-decoration-underline text-break" href="@link" target="_blank" rel="noopener noreferrer" class="text-decoration-none">@link</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (Model.EmbeddedLinks != null && Model.EmbeddedLinks.Any())
+                {
+                    <div>
+                        <h3>Презентація:</h3>
+                        @foreach (var embeddedLink in Model.EmbeddedLinks)
+                        {
+                            <iframe src="@embeddedLink" class="embeddedWindow mt-3"></iframe>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

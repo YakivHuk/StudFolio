@@ -1,0 +1,17 @@
+﻿@model StudFolio.Models.Portfolio
+@{
+    ViewData["Title"] = $"Портфоліо | {Model.User!.Firstname} {Model.User.Lastname}";
+    ViewData["Page"] = "personal-portfolio";
+}
+
+<div class="portfolio-container">
+    @Html.Raw(Model.Content)
+</div>
+
+@* Підключення модального вікна деталізації поста, якщо є прямий лінк в URL *@
+@if (ViewBag.DirectPost != null)
+{
+    var directPost = (StudFolio.Models.Post)ViewBag.DirectPost;
+    await Html.RenderPartialAsync("_PostDetailsModal", directPost);
+    <div id="directPostTrigger" data-post-id="@directPost.PostID"></div>
+}

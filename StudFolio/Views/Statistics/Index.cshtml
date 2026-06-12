@@ -1,0 +1,161 @@
+﻿@model StudFolio.Models.AccountSettingsViewModel
+@{
+    ViewData["Title"] = "Статистика | StudFolio";
+    ViewData["Description"] = "Статистика кількості користувачів, постів та портфоліо.";
+    ViewData["Page"] = "admin";
+    ViewData["ActiveAdminPage"] = "active";
+}
+<section class="section-1 py-5">
+        <div id="settingsContent" class="settings-content d-flex flex-column row-gap-4 flex-grow-1 h-100 p-4 overflow-y-auto">
+
+            <h2>Головна панель</h2>
+
+            <h3>Статистика</h3>
+
+            <h4>За весь час</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість користувачів</h5>
+                            <p class="h1 text-center">@Model.TotalUsers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість постів</h5>
+                            <p class="h1 text-center">@Model.TotalPosts</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість портфоліо</h5>
+                            <p class="h1 text-center">@Model.TotalPortfolios</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість користувачів із портфоліо</h5>
+                            <p class="h1 text-center">@Model.TotalUsersWithPortfolio</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>За останній день</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових користувачів</h5>
+                            <p class="h1 text-center">+@Model.NewUsersDay</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових постів</h5>
+                            <p class="h1 text-center">+@Model.NewPostsDay</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових портфоліо</h5>
+                            <p class="h1 text-center">+@Model.NewPortfoliosDay</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових користувачів із портфоліо</h5>
+                            <p class="h1 text-center">+@Model.NewUsersWithPortfolioDay</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>За останній тиждень</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових користувачів</h5>
+                            <p class="h1 text-center">+@Model.NewUsersWeek</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових постів</h5>
+                            <p class="h1 text-center">+@Model.NewPostsWeek</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових портфоліо</h5>
+                            <p class="h1 text-center">+@Model.NewPortfoliosWeek</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових користувачів із портфоліо</h5>
+                            <p class="h1 text-center">+@Model.NewUsersWithPortfolioWeek</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>За останній місяць</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових користувачів</h5>
+                            <p class="h1 text-center">+@Model.NewUsersMonth</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових постів</h5>
+                            <p class="h1 text-center">+@Model.NewPostsMonth</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових портфоліо</h5>
+                            <p class="h1 text-center">+@Model.NewPortfoliosMonth</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-card-color rounded-4 information-cards">
+                        <div class="h-100 d-flex flex-column justify-content-between align-items-center column-gap-3 p-3">
+                            <h5 class="text-center flex-grow-1">Кількість нових користувачів із портфоліо</h5>
+                            <p class="h1 text-center">+@Model.NewUsersWithPortfolioMonth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

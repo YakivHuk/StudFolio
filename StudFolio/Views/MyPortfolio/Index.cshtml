@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Моє портфоліо | StudFolio";
+    ViewData["Description"] = "Ваш персональний кабінет на StudFolio. Керуйте своїм електронним портфоліо, оновлюйте навички та додавайте проєкти.";
+    ViewData["Page"] = "my-portfolio";
+    ViewData["ActiveMyPortfolioPage"] = "active";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div id="portfolioContainer" class="portfolio-container">
+    <div id="portfolioLoader" class="d-flex justify-content-center align-items-center my-5" style="min-height: 200px;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Завантаження...</span>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar">
+    <button id="btnClearPortfolio" class="btn-icon" title="Очистити все (Почати спочатку)"><span class="icon-delete"></span></button>
+    <button id="btnSavePortfolio" class="btn-icon" title="Зберегти зміни"><span class="icon-save"></span></button>
+    <button id="btnCopyPortfolioLink" class="btn-icon d-none" data-portfolio-id="" title="Поділитися посиланням"><span class="icon-link"></span></button>
+</div>
+
+<div class="modal fade" id="portfolioConfirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title text-primary fs-5" id="confirmModalLabel">Очистити портфоліо</p>
+                <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити">
+                    <span class="icon-dagger"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmModalBody">Ви впевнені у свої діях?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-small btn-accent" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" id="btnPortfolioConfirmAction" class="btn-small btn-danger">Очистити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="portfolioAlertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title text-primary fs-5" id="alertModalLabel"></p>
+                <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити">
+                    <span class="icon-dagger"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="alertModalBody"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-small btn-accent" data-bs-dismiss="modal">ОК</button>
+            </div>
+        </div>
+    </div>
+</div>

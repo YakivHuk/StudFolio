@@ -1,0 +1,328 @@
+﻿@model IEnumerable<StudFolio.Models.Post>
+@{
+    ViewData["Title"] = "Мої пости | StudFolio";
+    ViewData["Description"] = "Ваш персональний блог на StudFolio. Додавайте нові публікації, редагуйте створені пости та діліться своїми роботами зі світом.";
+    ViewData["Page"] = "my-posts";
+    ViewData["ActiveMyPostsPage"] = "active";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<section class="section-1 container d-flex flex-column align-items-center py-5 gap-5">
+    <h1 class="text-center">Мої пости</h1>
+    <div class="toolbar d-flex column-gap-4 w-100">
+        <button class="btn-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar" aria-controls="filterSidebar" aria-expanded="false" aria-label="Відкрити критерії фільтру">
+            <span class="icon-filter"></span>
+        </button>
+        <form class="d-flex flex-grow-1" role="search" id="searchForm" method="get" action="@Url.Action("Index", "MyPosts")">
+            <input class="form-control border-primary me-2" type="search" id="postSearchInput" name="searchString" value="@ViewBag.SearchString" placeholder="Що шукаєте?" aria-label="Search" />
+            <button class="btn-icon" type="submit" id="postSearchBtn">
+                <span id="searchIcon" class="icon-search"></span>
+            </button>
+        </form>
+        <button class="btn-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#sortSidebar" aria-controls="sortSidebar" aria-expanded="false" aria-label="Відкрити критерії сортування">
+            <span class="icon-sort"></span>
+        </button>
+    </div>
+
+    <aside class="offcanvas offcanvas-start" id="filterSidebar">
+        <div class="offcanvas-header">
+            <p id="filterTitle" class="offcanvas-title">Критерії фільтру</p>
+            <button type="button" class="btn-icon text-reset" data-bs-dismiss="offcanvas" aria-label="Закрити">
+                <span class="icon-dagger"></span>
+            </button>
+        </div>
+        <form class="navbar-nav gap-4 offcanvas-body" id="filterForm">
+            <fieldset class="p-3 bg-card-color rounded-4">
+                <legend>Тип</legend>
+                @if (ViewBag.AvailableTypes != null)
+                {
+                    int index = 1;
+                    foreach (string type in ViewBag.AvailableTypes)
+                    {
+                        bool isChecked = ((List<string>)ViewBag.SelectedTypes).Contains(type);
+                        <div class="form-check">
+                            <input class="form-check-input border-primary" type="checkbox" name="selectedTypes" value="@type" id="typeCheck_@index" @(isChecked ? "checked" : "")>
+                            <label class="form-check-label" for="typeCheck_@index">@type</label>
+                        </div>
+                        index++;
+                    }
+                }
+            </fieldset>
+
+            <fieldset class="p-3 bg-card-color rounded-4">
+                <legend>Інструменти та технології</legend>
+                @if (ViewBag.AvailableTechs != null)
+                {
+                    int index = 1;
+                    foreach (string tech in ViewBag.AvailableTechs)
+                    {
+                        bool isChecked = ((List<string>)ViewBag.SelectedTechs).Contains(tech);
+                        <div class="form-check">
+                            <input class="form-check-input border-primary" type="checkbox" name="selectedTechs" value="@tech" id="techCheck_@index" @(isChecked ? "checked" : "")>
+                            <label class="form-check-label" for="techCheck_@index">@tech</label>
+                        </div>
+                        index++;
+                    }
+                }
+            </fieldset>
+
+            <fieldset class="p-3 bg-card-color rounded-4">
+                <legend>Час публікації</legend>
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="timePeriod" value="all" id="timeRadio1" @(ViewBag.TimePeriod == "all" ? "checked" : "")>
+                    <label class="form-check-label" for="timeRadio1">За весь час</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="timePeriod" value="day" id="timeRadio2" @(ViewBag.TimePeriod == "day" ? "checked" : "")>
+                    <label class="form-check-label" for="timeRadio2">За останню добу</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="timePeriod" value="week" id="timeRadio3" @(ViewBag.TimePeriod == "week" ? "checked" : "")>
+                    <label class="form-check-label" for="timeRadio3">За останній тиждень</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="timePeriod" value="month" id="timeRadio4" @(ViewBag.TimePeriod == "month" ? "checked" : "")>
+                    <label class="form-check-label" for="timeRadio4">За останній місяць</label>
+                </div>
+            </fieldset>
+            <div class="d-flex flex-column w-100">
+                <button type="submit" class="btn-small btn-accent">Застосувати фільтр</button>
+                <button type="button" id="resetFiltersBtn" class="btn-small btn-danger mt-2">Скинути фільтри</button>
+            </div>
+        </form>
+    </aside>
+
+    <aside class="offcanvas offcanvas-end" id="sortSidebar">
+        <div class="offcanvas-header">
+            <p id="sortTitle" class="offcanvas-title">Критерії сортування</p>
+            <button type="button" class="btn-icon text-reset" data-bs-dismiss="offcanvas" aria-label="Закрити">
+                <span class="icon-dagger"></span>
+            </button>
+        </div>
+        <form class="navbar-nav gap-4 offcanvas-body" id="sortForm">
+            <fieldset class="d-flex flex-column gap-4 bg-card-color rounded-4 p-3">
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="sortingCriterions" value="newest" id="sortRadio1" @(ViewBag.SortBy == "newest" ? "checked" : "")>
+                    <label class="form-check-label" for="sortRadio1">Найновіші</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="sortingCriterions" value="oldest" id="sortRadio2" @(ViewBag.SortBy == "oldest" ? "checked" : "")>
+                    <label class="form-check-label" for="sortRadio2">Найстаріші</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input border-primary" type="radio" name="sortingCriterions" value="techCount" id="sortRadio3" @(ViewBag.SortBy == "techCount" ? "checked" : "")>
+                    <label class="form-check-label" for="sortRadio3">За кількістю технологій та інструментів</label>
+                </div>
+            </fieldset>
+            <button type="submit" class="btn-small btn-accent mt-2">Сортувати</button>
+        </form>
+    </aside>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 w-100">
+        <div class="col">
+            <div class="new-post placeholder-glow" type="button" data-bs-toggle="modal" data-bs-target="#postModal">
+                <div class="card-img-top"></div>
+                <div class="card-body"></div>
+            </div>
+        </div>
+        @for (int i = 0; i < 11; i++)
+        {
+            <div class="col placeholder-post">
+                <div class="card placeholder-glow" aria-hidden="true">
+                    <img src="..." class="card-img-top placeholder" alt="...">
+                    <div class="card-body">
+                        <p class="card-title text-primary">
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-2"></span>
+                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-1"></span>
+                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-4"></span>
+                        </p>
+                        <div class="buttons placeholder-glow">
+                            <button class="btn-control placeholder" type="button" aria-label="Редагувати" data-bs-toggle="modal" data-bs-target="#postModal" disabled>
+                                <span class="icon-edit"></span>
+                            </button>
+                            <button class="btn-control placeholder" type="button" aria-label="Видалити" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" disabled>
+                                <span class="icon-delete"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+            {
+                @foreach (var post in Model)
+                {
+                    <div class="col done-post">
+                        <div class="card post-card" data-post-id="@post.PostID">
+                            <img src="@post.Preview" class="card-img-top" alt="Обкладинка">
+                            <div class="card-body">
+                                <p class="card-title text-primary">
+                                    @post.Title
+                                </p>
+                                <div class="buttons">
+                                    <button class="btn-control edit-post-btn" type="button" aria-label="Редагувати"
+                                            data-id="@post.PostID"
+                                            data-title="@post.Title"
+                                            data-description="@post.Description"
+                                            data-type="@post.Type"
+                                            data-tech="@string.Join(",", post.TechnologiesAndTools)"
+                                            data-links="@string.Join(",", post.Links)"
+                                            data-embedded="@string.Join(",", post.EmbeddedLinks)"
+                                            data-preview="@post.Preview"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#postModal">
+                                        <span class="icon-edit"></span>
+                                    </button>
+
+                                    <button class="btn-control delete-post-trigger-btn" type="button" aria-label="Видалити" 
+                                            data-id="@post.PostID"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteConfirmationModal">
+                                        <span class="icon-delete"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @await Html.PartialAsync("_PostDetailsModal", post)
+                }
+            }
+    </div>
+
+    @if (totalPages > 1) {
+        <nav aria-label="Навігація сторінок">
+            <ul class="pagination">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, searchString = ViewBag.SearchString, selectedTypes = ViewBag.SelectedTypes, selectedTechs = ViewBag.SelectedTechs, timePeriod = ViewBag.TimePeriod, sortBy = ViewBag.SortBy })">
+                        <span class="prev-icon" aria-hidden="true"></span>
+                    </a>
+                </li>
+
+                @{
+                    int maxVisiblePages = 5;
+                    int startPage = Math.Max(1, currentPage - 2);
+                    int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+                    if (endPage - startPage + 1 < maxVisiblePages) { startPage = Math.Max(1, endPage - maxVisiblePages + 1); }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = ViewBag.SearchString, selectedTypes = ViewBag.SelectedTypes, selectedTechs = ViewBag.SelectedTechs, timePeriod = ViewBag.TimePeriod, sortBy = ViewBag.SortBy })">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, searchString = ViewBag.SearchString, selectedTypes = ViewBag.SelectedTypes, selectedTechs = ViewBag.SelectedTechs, timePeriod = ViewBag.TimePeriod, sortBy = ViewBag.SortBy })">
+                        <span class="next-icon" aria-hidden="true"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+
+    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="postModalLabel">Створення посту</h2>
+                    <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити"><span class="icon-dagger"></span></button>
+                </div>
+                <form asp-controller="MyPosts" asp-action="Save" method="post" enctype="multipart/form-data" class="modal-body d-flex flex-column align-items-center row-gap-4 needs-validation" novalidate>
+                    <input type="hidden" name="postID" id="modalPostId" value="0" />
+                    <div class="preview">
+                        <div class="btn-camera">
+                            <input class="form-control" type="file" id="previewInput" name="previewInput" accept="image/*">
+                            <span class="icon-camera"></span>
+                        </div>
+                    </div>
+                    <div class="form-floating has-validation w-100">
+                        <input type="text" class="form-control border-primary" id="postHeading" name="title" placeholder="Заголовок" required>
+                        <label for="postHeading">Заголовок</label>
+                        <div class="invalid-feedback">
+                            Будь ласка, введіть заголовок посту
+                        </div>
+                    </div>
+                    <div class="form-floating has-validation w-100">
+                        <textarea class="form-control border-primary h-100" id="description" name="description" rows="3" placeholder="Опис" required></textarea>
+                        <label for="description">Опис</label>
+                        <div class="invalid-feedback">
+                            Будь ласка, введіть опис
+                        </div>
+                    </div>
+                    <div class="form-floating has-validation w-100">
+                        <select class="form-select py-3 border-primary" aria-label="Вибір типу посту" id="typePost" name="type" required>
+                            <option value="" selected disabled hidden>Тип</option>
+                            <option value="Лабораторна робота">Лабораторна робота</option>
+                            <option value="Практична робота">Практична робота</option>
+                            <option value="Самостійна робота">Самостійна робота</option>
+                            <option value="Командна робота">Командна робота</option>
+                            <option value="Практика">Практика</option>
+                            <option value="Курсова робота">Курсова робота</option>
+                            <option value="Дипломна робота">Дипломна робота</option>
+                            <option value="Захід">Захід</option>
+                        </select>
+                        <div class="invalid-feedback">
+                                Будь ласка, виберіть тип посту
+                        </div>
+                    </div>
+                    <div class="form-floating w-100 d-flex">
+                        <input type="text" id="techInput" class="form-control border-primary flex-grow-1" placeholder="Наприклад: Figma, C#, Git">
+                        <button class="btn btn-control ms-2" type="button" id="btnAddTech">
+                            <span class="icon-plus"></span>
+                        </button>
+                        <label for="techInput">Технології та інструменти</label>
+                    </div>
+                    <div id="techContainer" class="d-flex flex-wrap gap-2 w-100"></div>
+                    <div class="form-floating w-100 d-flex">
+                        <input type="text" id="linkInput" class="form-control border-primary flex-grow-1" placeholder="https://username.github.io">
+                        <button class="btn btn-control ms-2" type="button" id="btnAddLink">
+                            <span class="icon-plus"></span>
+                        </button>
+                        <label for="linkInput">Посилання на джерела</label>
+                    </div>
+                    <div id="linkContainer" class="d-flex flex-wrap gap-2 w-100"></div>
+                    <div class="form-floating w-100 d-flex">
+                        <input type="text" id="embeddedLinkInput" class="form-control border-primary flex-grow-1" placeholder="https://username.github.io">
+                        <button class="btn btn-control ms-2" type="button" id="btnAddembeddedLink">
+                            <span class="icon-plus"></span>
+                        </button>
+                        <label for="embeddedLinkInput">Вбудовані посилання</label>
+                    </div>
+                    <div id="embeddedLinkContainer" class="d-flex flex-wrap gap-2 w-100"></div>
+                    <button type="submit" class="btn-small btn-accent">Створити</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form asp-controller="MyPosts" asp-action="Delete" method="post" class="w-100">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deletePostId" value="" />
+
+                    <div class="modal-header">
+                        <p class="modal-title text-primary fs-5" id="deleteModalLabel">Видалення посту</p>
+                        <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити">
+                            <span class="icon-dagger"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Ви впевнені у свої діях?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-small btn-accent" data-bs-dismiss="modal">Скасувати</button>
+                        <button type="submit" class="btn-small btn-danger">Видалити</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

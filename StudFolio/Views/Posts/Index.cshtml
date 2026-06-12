@@ -1,0 +1,217 @@
+﻿@model IEnumerable<StudFolio.Models.Post>
+@{
+    ViewData["Title"] = "Пости | Усі створені пости користувачів StudFolio";
+    ViewData["Description"] = "Шукаєте натхнення? Переглядайте, оцінюйте та діліться захоплюючими роботами й студентськими постами на платформі StudFolio.";
+    ViewData["Page"] = "posts";
+    ViewData["ActivePostsPage"] = "active";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<section class="section-1 container d-flex flex-column align-items-center py-5 gap-5">
+    <h1 class="text-center">Пости</h1>
+
+    @* Одна головна форма обгортає все, зберігаючи структуру flex-контейнера *@
+    <form method="get" action="@Url.Action("Index", "Posts")" id="mainFilterForm" class="w-100 d-flex flex-column align-items-center gap-5">
+
+        @* Тепер тулбар знаходиться всередині високої форми, тому sticky працюватиме ідеально *@
+        <div class="toolbar d-flex column-gap-4 w-100">
+            <button class="btn-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar" aria-controls="filterSidebar" aria-expanded="false" aria-label="Відкрити критерії фільтру">
+                <span class="icon-filter"></span>
+            </button>
+
+            @* Прибрано тег <form> звідси. Пошуковий інпут став частиною загальної форми *@
+            <div class="d-flex flex-grow-1" role="search">
+                <input class="form-control border-primary me-2" type="search" name="searchString" value="@ViewBag.SearchString" placeholder="Що шукаєте?" aria-label="Пошук" />
+                <button class="btn-icon" type="submit">
+                    <span class="icon-search"></span>
+                </button>
+            </div>
+
+            <button class="btn-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#sortSidebar" aria-controls="sortSidebar" aria-expanded="false" aria-label="Відкрити критерії сортування">
+                <span class="icon-sort"></span>
+            </button>
+        </div>
+
+        @* Критерії фільтру (Компоненти форми залишаються всередині тегу form) *@
+        <aside class="offcanvas offcanvas-start" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
+            <div class="offcanvas-header">
+                <p class="offcanvas-title" id="filterSidebarLabel">Критерії фільтру</p>
+                <button type="button" class="btn-icon" data-bs-dismiss="offcanvas" aria-label="Закрити">
+                    <span class="icon-dagger"></span>
+                </button>
+            </div>
+            <div class="navbar-nav gap-4 offcanvas-body" id="filterForm">
+                <fieldset class="p-3 bg-card-color rounded-4">
+                    <legend>Спеціальність</legend>
+                    @if (ViewBag.AllSpecialties != null && (ViewBag.AllSpecialties as List<string>).Any())
+                    {
+                        @foreach (string spec in ViewBag.AllSpecialties)
+                        {
+                            bool isChecked = ((List<string>)ViewBag.SelectedSpecialties).Contains(spec);
+                            <div class="form-check">
+                                <input class="form-check-input filter-trigger" type="checkbox" name="selectedSpecialties" value="@spec" id="spec-@spec" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="spec-@spec">@spec</label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Немає доступних спеціальностей</p>
+                    }
+                </fieldset>
+
+                <fieldset class="p-3 bg-card-color rounded-4">
+                    <legend>Тип</legend>
+                    @if (ViewBag.AllTypes != null)
+                    {
+                        @foreach (string type in ViewBag.AllTypes)
+                        {
+                            bool isChecked = ((List<string>)ViewBag.SelectedTypes).Contains(type);
+                            <div class="form-check">
+                                <input class="form-check-input filter-trigger" type="checkbox" name="selectedTypes" value="@type" id="type-@type" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="type-@type">@type</label>
+                            </div>
+                        }
+                    }
+                </fieldset>
+
+                <fieldset class="p-3 bg-card-color rounded-4">
+                    <legend>Інструменти та технології</legend>
+                    @if (ViewBag.AllTechs != null)
+                    {
+                        @foreach (string tech in ViewBag.AllTechs)
+                        {
+                            bool isChecked = ((List<string>)ViewBag.SelectedTechs).Contains(tech);
+                            <div class="form-check">
+                                <input class="form-check-input filter-trigger" type="checkbox" name="selectedTechs" value="@tech" id="tech-@tech" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="tech-@tech">@tech</label>
+                            </div>
+                        }
+                    }
+                </fieldset>
+
+                <fieldset class="p-3 bg-card-color rounded-4">
+                    <legend>Час публікації</legend>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="radio" name="timePeriod" value="" id="period-all" @(string.IsNullOrEmpty(ViewBag.TimePeriod) ? "checked" : "")>
+                        <label class="form-check-label" for="period-all">За весь час</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="timePeriod" value="day" id="period-day" @(ViewBag.TimePeriod == "day" ? "checked" : "")>
+                        <label class="form-check-label" for="period-day">За останню добу</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="timePeriod" value="week" id="period-week" @(ViewBag.TimePeriod == "week" ? "checked" : "")>
+                        <label class="form-check-label" for="period-week">За останній тиждень</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="timePeriod" value="month" id="period-month" @(ViewBag.TimePeriod == "month" ? "checked" : "")>
+                        <label class="form-check-label" for="period-month">За останній місяць</label>
+                    </div>
+                </fieldset>
+
+                <div class="d-flex flex-column w-100">
+                    <button type="submit" class="btn-small btn-accent">Застосувати фільтр</button>
+                    <button type="button" id="resetFiltersBtn" class="btn-small btn-danger mt-2">Скинути фільтри</button>
+                </div>
+            </div>
+        </aside>
+
+        @* Критерії сортування *@
+        <aside class="offcanvas offcanvas-end" tabindex="-1" id="sortSidebar" aria-labelledby="sortSidebarLabel">
+            <div class="offcanvas-header">
+                <p class="offcanvas-title" id="sortSidebarLabel">Критерії сортування</p>
+                <button type="button" class="btn-icon text-reset" data-bs-dismiss="offcanvas" aria-label="Закрити">
+                    <span class="icon-dagger"></span>
+                </button>
+            </div>
+            <div class="navbar-nav gap-4 offcanvas-body" id="sortForm">
+                <fieldset class="d-flex flex-column gap-4 bg-card-color rounded-4 p-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="sortBy" value="recommended" id="sort-rec" @(ViewBag.SortBy == "recommended" ? "checked" : "")>
+                        <label class="form-check-label" for="sort-rec">Рекомендовані</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="sortBy" value="newest" id="sort-new" @(ViewBag.SortBy == "newest" ? "checked" : "")>
+                        <label class="form-check-label" for="sort-new">Найновіші</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="sortBy" value="oldest" id="sort-oldest" @(ViewBag.SortBy == "oldest" ? "checked" : "")>
+                        <label class="form-check-label border-primary" for="sort-oldest">Найстаріші</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="sortBy" value="techCount" id="sort-techCount" @(ViewBag.SortBy == "techCount" ? "checked" : "")>
+                        <label class="form-check-label border-primary" for="sort-techCount">За кількістю технологій та інструментів</label>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn-small btn-accent mt-2" data-bs-dismiss="offcanvas">Сортувати</button>
+            </div>
+        </aside>
+
+        @* Сітка карток всередині форми дає висоту для треку sticky елемента *@
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 w-100">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var post in Model)
+                {
+                    <div class="col">
+                        <div class="card post-card" data-bs-toggle="modal" data-bs-target="#postModal-@post.PostID">
+                            <img src="@post.Preview" class="card-img-top" alt="Обкладинка">
+                            <div class="card-body">
+                                <p class="card-title text-primary" title="@post.Title">@post.Title</p>
+                            </div>
+                        </div>
+                    </div>
+                    @await Html.PartialAsync("_PostDetailsModal", post)
+                }
+            }
+            else
+            {
+                <div class="w-100 text-center py-5">
+                    <p class="text-muted fs-5">Постів не знайдено за обраними критеріями.</p>
+                </div>
+            }
+            @if (ViewBag.DirectPost != null)
+            {
+                // Рендеримо модальне вікно окремо, якщо пост не потрапив у стандартну вибірку сторінки
+                await Html.RenderPartialAsync("_PostDetailsModal", (StudFolio.Models.Post)ViewBag.DirectPost);
+            }
+        </div>
+
+        @* Блок пагінації *@
+        @if (totalPages > 1)
+        {
+            <nav aria-label="Навігація сторінок" class="mt-3">
+                <ul class="pagination">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, searchString = ViewBag.SearchString, selectedTypes = ((List<string>)ViewBag.SelectedTypes).ToArray(), selectedTechs = ((List<string>)ViewBag.SelectedTechs).ToArray(), selectedSpecialties = ((List<string>)ViewBag.SelectedSpecialties).ToArray(), timePeriod = ViewBag.TimePeriod, sortBy = ViewBag.SortBy })">
+                            <span class="prev-icon" aria-hidden="true"></span>
+                        </a>
+                    </li>
+
+                    @{
+                        int maxVisiblePages = 5;
+                        int startPage = Math.Max(1, currentPage - 2);
+                        int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+                        if (endPage - startPage + 1 < maxVisiblePages) { startPage = Math.Max(1, endPage - maxVisiblePages + 1); }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = ViewBag.SearchString, selectedTypes = ((List<string>)ViewBag.SelectedTypes).ToArray(), selectedTechs = ((List<string>)ViewBag.SelectedTechs).ToArray(), selectedSpecialties = ((List<string>)ViewBag.SelectedSpecialties).ToArray(), timePeriod = ViewBag.TimePeriod, sortBy = ViewBag.SortBy })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, searchString = ViewBag.SearchString, selectedTypes = ((List<string>)ViewBag.SelectedTypes).ToArray(), selectedTechs = ((List<string>)ViewBag.SelectedTechs).ToArray(), selectedSpecialties = ((List<string>)ViewBag.SelectedSpecialties).ToArray(), timePeriod = ViewBag.TimePeriod, sortBy = ViewBag.SortBy })">
+                            <span class="next-icon" aria-hidden="true"></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </form>
+</section>

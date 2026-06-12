@@ -1,0 +1,32 @@
+﻿@model StudFolio.Models.AccountSettingsViewModel
+@{
+	ViewData["Title"] = "Налаштування профілю | StudFolio";
+	ViewData["Description"] = "Керування обліковим записом StudFolio: змінюйте особисті дані, налаштовуйте безпеку профілю та керуйте своїм акаунтом.";
+    ViewData["Page"] = "settings";
+	ViewData["ActiveSettingsPage"] = "active";
+}
+<section class="section-1 py-5">
+	<div class="settings-container d-flex">
+		<div class="px-4">
+			<nav id="navbar-settings-menu" class="nav flex-column">
+				<ul class="navbar-nav gap-2">
+					<li class="nav-item">
+						<a class="nav-link text-primary active" href="#" data-url="@Url.Action("GetAccount", "Settings")"><span class="icon-profile"></span> <span class="link-text-hidden">Обліковий запис</span></a>
+						<span class="indicator"></span>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link text-primary" href="#" data-url="@Url.Action("GetSecurity", "Settings")"><span class="icon-lock"></span> <span class="link-text-hidden">Безпека</span></a>
+						<span class="indicator"></span>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link text-primary" href="#" data-url="@Url.Action("GetPortfolio", "Settings")"><span class="icon-interface"></span> <span class="link-text-hidden">Портфоліо</span></a>
+						<span class="indicator"></span>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<div id="settingsContent" class="settings-content d-flex flex-column row-gap-4 flex-grow-1 h-100 p-4 overflow-y-auto">
+			@await Html.PartialAsync("_Account", Model)
+		</div>
+	</div>
+</section>

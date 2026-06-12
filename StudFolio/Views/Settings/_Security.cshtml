@@ -1,0 +1,34 @@
+﻿@model StudFolio.Models.SecuritySettingsViewModel
+<h2>Безпека</h2>
+@if (!string.IsNullOrEmpty(Model?.StatusMessage))
+{
+    <div class="alert alert-success w-100">@Model.StatusMessage</div>
+}
+<form asp-controller="Settings" asp-action="ChangePassword" method="post" class="d-flex flex-column align-items-start row-gap-4" novalidate>
+    <h3 class="text-primary">Зміна пароля</h3>
+    <div class="form-floating w-100 has-validation">
+        <input type="password" class="form-control border-primary" asp-for="OldPassword" placeholder="Password" required>
+        <label asp-for="OldPassword">Поточний пароль</label>
+        <div class="invalid-feedback">
+            Будь ласка, введіть пароль
+        </div>
+        <span asp-validation-for="OldPassword" class="text-danger"></span>
+    </div>
+    <div class="form-floating w-100 has-validation">
+        <input type="password" class="form-control border-primary" asp-for="NewPassword" placeholder="Password" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$">
+        <label asp-for="NewPassword">Пароль</label>
+        <div class="invalid-feedback">
+            Будь ласка, введіть пароль, який міститиме 8 символів, одну малу літеру, одну велику літеру та одну цифру
+        </div>
+        <span asp-validation-for="NewPassword" class="text-danger"></span>
+    </div>
+    <div class="form-floating w-100 has-validation">
+        <input type="password" class="form-control border-primary" asp-for="AgainPassword" placeholder="Password" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$">
+        <label asp-for="AgainPassword">Підтвердіть пароль</label>
+        <div class="invalid-feedback">
+            Будь ласка, введіть ще раз пароль, який міститиме 8 символів, одну малу літеру, одну велику літеру та одну цифру
+        </div>
+        <span asp-validation-for="AgainPassword" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn-small btn-accent">Зберегти</button>
+</form>

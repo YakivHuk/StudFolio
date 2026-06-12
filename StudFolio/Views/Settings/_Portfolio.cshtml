@@ -1,0 +1,41 @@
+﻿@model bool
+
+<h2>Портфоліо</h2>
+<div class="d-flex flex-column align-items-start row-gap-4">
+    <h3 class="text-primary">Доступ в інтернеті</h3>
+    <p class="m-0">Якщо ви бажаєте приховати своє портфоліо від інших, вимкніть цю опцію. Користувачі не бачитимуть його у загальному списку, проте воно залишиться доступним за прямим посиланням.</p>
+
+    <div class="form-check form-switch">
+        @Html.AntiForgeryToken()
+        <input class="form-check-input" type="checkbox" role="switch" id="portfolioHideToggle" @(Model ? "checked" : "") data-url="@Url.Action("UpdatePortfolioVisibility", "Settings")">
+        <label class="form-check-label" for="portfolioHideToggle">Відображати портфоліо у загальному списку</label>
+    </div>
+</div>
+
+<div class="d-flex flex-column align-items-start row-gap-4 mt-4">
+    <h3 class="text-primary">Видалити портфоліо</h3>
+    <button type="button" class="btn-small btn-danger" data-bs-toggle="modal" data-bs-target="#deletePortfolioModal" @(ViewBag.HasPortfolio == false ? "disabled" : "")>Видалити портфоліо</button>
+
+    <form asp-controller="Settings" asp-action="DeletePortfolio" method="post" id="deletePortfolioForm">
+        @Html.AntiForgeryToken()
+        <div class="modal fade" id="deletePortfolioModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p class="modal-title text-primary fs-5" id="modalLabel">Видалення портфоліо</p>
+                        <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити">
+                            <span class="icon-dagger"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Ви впевнені у своїй дії? Створення нового портфоліо вимагатиме повторного заповнення всіх даних.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-small btn-accent" data-bs-dismiss="modal">Скасувати</button>
+                        <button type="submit" form="deletePortfolioForm" class="btn-small btn-danger">Видалити</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

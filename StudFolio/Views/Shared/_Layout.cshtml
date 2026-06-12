@@ -1,0 +1,483 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta name="description" content="@ViewData["Description"]" />
+    <meta name="keywords" content="StudFolio, портфоліо, стюдфоліо, створення портфоліо, створити портфоліо, портфоліо студента, електронне портфоліо студента" />
+    <link href="~/favicon.svg" rel="icon" type="image/svg" />
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudFolio.styles.css" asp-append-version="true" />
+</head>
+<body class="@ViewData["Page"]">
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container-fluid d-flex justify-content-between">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="/images/full-logotype.svg" alt="Логотип" />
+                </a>
+                <button class="btn-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Відкрити меню навігації">
+                    <span class="icon-burger-menu"></span>
+                </button>
+                <div class="offcanvas offcanvas-end px-3" id="navbarNav">
+                    <div class="offcanvas-header justify-content-between">
+                        <p class="offcanvas-title">Навігація</p>
+                        <button type="button" class="btn-icon" data-bs-dismiss="offcanvas" aria-label="Close">
+                            <span class="icon-dagger"></span>
+                        </button>
+                    </div>
+                    <ul class="navbar-nav gap-4 offcanvas-body align-items-lg-center">
+                        <li class="nav-item">
+                            <a class="text-primary nav-link @ViewData["ActiveHomePage"] " aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Домашня</a>
+                            <span class="indicator"></span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="text-primary nav-link @ViewData["ActivePostsPage"] " asp-area="" asp-controller="Posts" asp-action="Index">Пости</a>
+                            <span class="indicator"></span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="text-primary nav-link @ViewData["ActivePortfolioPage"] " asp-area="" asp-controller="Portfolio" asp-action="Index">Портфоліо</a>
+                            <span class="indicator"></span>
+                        </li>
+
+                        @* Відображаємо "Мої пости" та "Моє портфоліо" лише для авторизованих користувачів *@
+                        
+
+                        @* Логіка кнопок або Аватарки користувача *@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var avatarPath = User.FindFirst("AvatarPath")?.Value ?? "/images/profile.svg";
+                            <li class="nav-item dropdown">
+                                <div class="d-flex column-gap-3">
+                                    <button class="rounded-circle border border-primary btn-icon overflow-hidden" id="userMenuDropdown" data-bs-toggle="dropdown">
+                                        <img src="@avatarPath" aria-expanded="false" alt="@User.Identity.Name">
+                                    </button>
+                                    <p class="h5 d-flex align-items-center d-lg-none">@User.Identity.Name</p>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+                                        <li><span class="dropdown-item-text text-secondary">@User.Identity.Name</span></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-primary" asp-controller="MyPosts" asp-action="Index">Мої пости</a></li>
+                                        <li><a class="dropdown-item text-primary" asp-controller="MyPortfolio" asp-action="Index">Моє портфоліо</a></li>
+                                        <li><a class="dropdown-item text-primary" asp-controller="Settings" asp-action="Index">Налаштування</a></li>
+                                        @if (User.IsInRole("admin") || User.IsInRole("owner"))
+                                            {
+                                            <li><a class="dropdown-item text-primary" asp-controller="Statistics" asp-action="Index">Статистика</a></li>
+                                            }
+                                            <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">Вийти з акаунта</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item d-flex column-gap-4">
+                                <button type="button" class="btn-small btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Увійти</button>
+                                <button class="btn-small btn-accent" data-bs-toggle="modal" data-bs-target="#modularRegistrationWindow">Зареєструватися</button>
+                            </li>
+                        }
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item d-lg-none">
+                                <a class="text-primary nav-link @ViewData["ActiveMyPostsPage"] " asp-controller="MyPosts" asp-action="Index">Мої пости</a>
+                                <span class="indicator"></span>
+                            </li>
+                            <li class="nav-item d-lg-none">
+                                <a class="text-primary nav-link @ViewData["ActiveMyPortfolioPage"] " asp-controller="MyPortfolio" asp-action="Index">Моє портфоліо</a>
+                                <span class="indicator"></span>
+                            </li>
+                            <li class="nav-item d-lg-none">
+                                <a class="text-primary nav-link @ViewData["ActiveSettingsPage"] " asp-controller="Settings" asp-action="Index">Налаштування</a>
+                                <span class="indicator"></span>
+                            </li>
+                            @if (User.IsInRole("admin") || User.IsInRole("owner"))
+                                {
+                                    <li class="nav-item d-lg-none">
+                                    <a class="text-primary nav-link @ViewData["ActiveAdminPage"] " asp-controller="Statistics" asp-action="Index">Статистика</a>
+                                        <span class="indicator"></span>
+                                    </li>
+                                }
+                                <li class="nav-item d-lg-none">
+                                <a class="text-danger nav-link" asp-controller="Account" asp-action="Logout">Вийти з акаунта</a>
+                                <span class="indicator"></span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @* --- МОДАЛЬНЕ ВІКНО АВТОРИЗАЦІЇ --- *@
+    <div class="modal fade" id="modularAuthorizationWindow" tabindex="-1" aria-labelledby="modularAuthorizationWindowLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title fs-5" id="modularAuthorizationWindowLabel">Увійти в StudFolio</p>
+                    <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити"><span class="icon-dagger"></span></button>
+                </div>
+                <form asp-controller="Account" asp-action="Login" method="post" class="modal-body d-flex flex-column align-items-center row-gap-4 needs-validation" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    @if (TempData["LoginError"] != null)
+                    {
+                        <div class="alert alert-danger w-100 small py-2 mb-0 text-center">
+                            @TempData["LoginError"]
+                        </div>
+                    }
+
+                    <div class="form-floating has-validation w-100">
+                        <input type="email" name="Email" class="form-control border-primary" id="email" placeholder="name@example.com" required>
+                        <label for="email">Електронна пошта</label>
+                        <div class="invalid-feedback">Будь ласка, введіть електронну пошту</div>
+                    </div>
+                    <div class="form-floating has-validation w-100">
+                        <input type="password" name="Password" class="form-control border-primary" id="password" placeholder="Password" required>
+                        <label for="password">Пароль</label>
+                        <div class="invalid-feedback">Будь ласка, введіть пароль</div>
+                    </div>
+                    <button type="submit" class="btn-small btn-accent">Увійти</button>
+                </form>
+                <div class="modal-footer justify-content-center">
+                    <p class="text-center">Не маєте облікового запису? <a class="text-primary text-decoration-underline text-accent" role="button" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modularRegistrationWindow">Створіть його!</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* --- МОДАЛЬНЕ ВІКНО РЕЄСТРАЦІЇ --- *@
+    <div class="modal fade" id="modularRegistrationWindow" tabindex="-1" aria-labelledby="modularRegistrationWindowLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title fs-5" id="modularRegistrationWindowLabel">Реєстрація в StudFolio</p>
+                    <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити"><span class="icon-dagger"></span></button>
+                </div>
+                <form asp-controller="Account" asp-action="Register" method="post" enctype="multipart/form-data" class="modal-body d-flex flex-column align-items-center row-gap-4 needs-validation" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    @if (TempData["RegisterError"] != null)
+                    {
+                        <div class="alert alert-danger w-100 small py-2 mb-0">
+                            @Html.Raw(TempData["RegisterError"])
+                        </div>
+                    }
+
+                    <div class="avatar">
+                        <div class="btn-camera">
+                            <input class="form-control" type="file" id="avatar" name="AvatarFile" accept="image/*">
+                            <span class="icon-camera"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-floating w-100 has-validation">
+                        <input type="email" name="Email" class="form-control border-primary" id="newEmail" placeholder="name@example.com" required>
+                        <label for="newEmail">Електронна пошта</label>
+                        <div class="invalid-feedback">Будь ласка, введіть електронну пошту</div>
+                    </div>
+                    <div class="form-floating w-100 has-validation">
+                        <input type="password" name="Password" class="form-control border-primary" id="newPassword" placeholder="Password" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$">
+                        <label for="newPassword">Пароль</label>
+                        <div class="invalid-feedback">Будь ласка, введіть пароль, який міститиме 8 символів, одну малу літеру, одну велику літеру та одну цифру</div>
+                    </div>
+                    <div class="form-floating w-100 has-validation">
+                        <input type="password" name="ConfirmPassword" class="form-control border-primary" id="repeatingNewPassword" placeholder="12345678" required>
+                        <label for="repeatingNewPassword">Підтвердіть пароль</label>
+                        <div class="invalid-feedback">Будь ласка, введіть ще раз пароль</div>
+                    </div>
+                    <div class="form-floating w-100 has-validation">
+                        <input type="text" name="Lastname" class="form-control border-primary" id="lastname" placeholder="Іванов" required>
+                        <label for="lastname">Прізвище</label>
+                        <div class="invalid-feedback">Будь ласка, введіть прізвище</div>
+                    </div>
+                    <div class="form-floating w-100 has-validation">
+                        <input type="text" name="Firstname" class="form-control border-primary" id="name" placeholder="Іван" required>
+                        <label for="name">Ім'я</label>
+                        <div class="invalid-feedback">Будь ласка, введіть ім'я</div>
+                    </div>
+                    <div class="form-floating w-100">
+                        <input type="text" name="Middlename" class="form-control border-primary" id="middlename" placeholder="Іванович">
+                        <label for="middlename">По батькові</label>
+                    </div>
+                    <div class="form-floating w-100">
+                        <input type="text" name="EducationInstitution" class="form-control border-primary" id="educationalInstitution" placeholder="Навчальний заклад">
+                        <label for="educationalInstitution">Назва навчального закладу</label>
+                    </div>
+                    <select class="form-select py-3 border-primary" aria-label="Вибір спеціальності" id="specialty" name="Specialty">
+                        <option value="" selected disabled hidden>Спеціальність</option>
+
+                        <optgroup label="A Освіта">
+                            <option value="A1 Освітні науки">A1 Освітні науки</option>
+                            <option value="A2 Дошкільна освіта">A2 Дошкільна освіта</option>
+                            <option value="A3 Початкова освіта">A3 Початкова освіта</option>
+                            <option value="A4 Середня освіта (за предметними спеціальностями)">A4 Середня освіта (за предметними спеціальностями)</option>
+                            <option value="A5 Професійна освіта (за спеціалізаціями)">A5 Професійна освіта (за спеціалізаціями)</option>
+                            <option value="A6 Спеціальна освіта">A6 Спеціальна освіта</option>
+                            <option value="A7 Фізична культура і спорт">A7 Фізична культура і спорт</option>
+                        </optgroup>
+
+                        <optgroup label="B Культура, мистецтво та гуманітарні науки">
+                            <option value="B1 Аудіовізуальне мистецтво та медіавиробництво">B1 Аудіовізуальне мистецтво та медіавиробництво</option>
+                            <option value="B2 Дизайн">B2 Дизайн</option>
+                            <option value="B3 Декоративне мистецтво та ремесла">B3 Декоративне мистецтво та ремесла</option>
+                            <option value="B4 Образотворче мистецтво та реставрація">B4 Образотворче мистецтво та реставрація</option>
+                            <option value="B5 Музичне мистецтво">B5 Музичне мистецтво</option>
+                            <option value="B6 Перформативні мистецтва">B6 Перформативні мистецтва</option>
+                            <option value="B7 Релігієзнавство">B7 Релігієзнавство</option>
+                            <option value="B8 Богослов’я">B8 Богослов’я</option>
+                            <option value="B9 Історія та археологія">B9 Історія та археологія</option>
+                            <option value="B10 Філософія">B10 Філософія</option>
+                            <option value="B11 Філологія (за спеціалізаціями)">B11 Філологія (за спеціалізаціями)</option>
+                            <option value="B12 Культурологія та музеєзнавство">B12 Культурологія та музеєзнавство</option>
+                            <option value="B13 Бібліотечна, інформаційна та архівна справа">B13 Бібліотечна, інформаційна та архівна справа</option>
+                            <option value="B14 Організація соціокультурної діяльності">B14 Організація соціокультурної діяльності</option>
+                        </optgroup>
+
+                        <optgroup label="C Соціальні науки, журналістика та інформація">
+                            <option value="C1 Економіка">C1 Економіка</option>
+                            <option value="C2 Політологія">C2 Політологія</option>
+                            <option value="C3 Міжнародні відносини">C3 Міжнародні відносини</option>
+                            <option value="C4 Психологія">C4 Психологія</option>
+                            <option value="C5 Соціологія">C5 Соціологія</option>
+                            <option value="C6 Географія та регіональні студії">C6 Географія та регіональні студії</option>
+                            <option value="C7 Журналістика">C7 Журналістика</option>
+                        </optgroup>
+
+                        <optgroup label="D Бізнес, адміністрування та право">
+                            <option value="D1 Облік і оподаткування">D1 Облік і оподаткування</option>
+                            <option value="D2 Фінанси, банківська справа, страхування та фондовий ринок">D2 Фінанси, банківська справа, страхування та фондовий ринок</option>
+                            <option value="D3 Менеджмент">D3 Менеджмент</option>
+                            <option value="D4 Публічне управління та адміністрування">D4 Публічне управління та адміністрування</option>
+                            <option value="D5 Маркетинг">D5 Маркетинг</option>
+                            <option value="D6 Секретарська та офісна справа">D6 Секретарська та офісна справа</option>
+                            <option value="D7 Торгівля">D7 Торгівля</option>
+                            <option value="D8 Право">D8 Право</option>
+                            <option value="D9 Міжнародне право">D9 Міжнародне право</option>
+                        </optgroup>
+
+                        <optgroup label="E Природничі науки, математика та статистика">
+                            <option value="E1 Біологія та біохімія">E1 Біологія та біохімія</option>
+                            <option value="E2 Екологія">E2 Екологія</option>
+                            <option value="E3 Хімія">E3 Хімія</option>
+                            <option value="E4 Науки про Землю">E4 Науки про Землю</option>
+                            <option value="E5 Фізика та астрономія">E5 Фізика та астрономія</option>
+                            <option value="E6 Прикладна фізика та nanomaтеріали">E6 Прикладна фізика та наноматеріали</option>
+                            <option value="E7 Математика">E7 Математика</option>
+                            <option value="E8 Статистика">E8 Статистика</option>
+                        </optgroup>
+
+                        <optgroup label="F Інформаційні технології">
+                            <option value="F1 Прикладна математика">F1 Прикладна математика</option>
+                            <option value="F2 Інженерія програмного забезпечення">F2 Інженерія програмного забезпечення</option>
+                            <option value="F3 Комп’ютерні науки">F3 Комп’ютерні науки</option>
+                            <option value="F4 Системний аналіз та наука про дані">F4 Системний аналіз та наука про дані</option>
+                            <option value="F5 Кібербезпека та захист інформації">F5 Кібербезпека та захист інформації</option>
+                            <option value="F6 Інформаційні системи і технології">F6 Інформаційні системи і технології</option>
+                            <option value="F7 Комп’ютерна інженерія">F7 Комп’ютерна інженерія</option>
+                        </optgroup>
+
+                        <optgroup label="G Інженерія, виробництво та будівництво">
+                            <option value="G1 Хімічні технології та інженерія">G1 Хімічні технології та інженерія</option>
+                            <option value="G2 Технології захисту навколишнього середовища">G2 Технології захисту навколишнього середовища</option>
+                            <option value="G3 Електрична інженерія">G3 Електрична інженерія</option>
+                            <option value="G4 Енерговиробництво (за спеціалізаціями)">G4 Енерговиробництво (за спеціалізаціями)</option>
+                            <option value="G5 Електроніка, електронні комунікації, приладобудування та радіотехніка">G5 Електроніка, електронні комунікації, приладобудування та радіотехніка</option>
+                            <option value="G6 Інформаційно-вимірювальні технології">G6 Інформаційно-вимірювальні технології</option>
+                            <option value="G7 Автоматизація, комп’ютерно-інтегровані технології та робототехніка">G7 Автоматизація, комп’ютерно-інтегровані технології та робототехніка</option>
+                            <option value="G8 Матеріалознавство">G8 Матеріалознавство</option>
+                            <option value="G9 Прикладна механіка">G9 Прикладна механіка</option>
+                            <option value="G10 Металургія">G10 Металургія</option>
+                            <option value="G11 Машинобудування">G11 Машинобудування</option>
+                            <option value="G12 Авіаційна та ракетно-космічна техніка">G12 Авіаційна та ракетно-космічна техніка</option>
+                            <option value="G13 Харчові технології">G13 Харчові технології</option>
+                            <option value="G14 Деревообробні та меблеві технології">G14 Деревообробні та меблеві технології</option>
+                            <option value="G15 Технології легкої промисловості">G15 Технології легкої промисловості</option>
+                            <option value="G16 Гірництво та нафтогазові технології">G16 Гірництво та нафтогазові технології</option>
+                            <option value="G17 Архітектура та містобудування">G17 Архітектура та містобудування</option>
+                            <option value="G18 Геодезія та землеустрій">G18 Геодезія та землеустрій</option>
+                            <option value="G19 Будівництво та цивільна інженерія">G19 Будівництво та цивільна інженерія</option>
+                            <option value="G20 Видавництво та поліграфія">G20 Видавництво та поліграфія</option>
+                            <option value="G21 Біотехнології та біоінженерія">G21 Біотехнології та біоінженерія</option>
+                            <option value="G22 Біомедична інженерія">G22 Біомедична інженерія</option>
+                        </optgroup>
+
+                        <optgroup label="H Сільське, лісове, рибне господарство та ветеринарна медицина">
+                            <option value="H1 Агрономія">H1 Агрономія</option>
+                            <option value="H2 Тваринництво">H2 Тваринництво</option>
+                            <option value="H3 Садово-паркове господарство">H3 Садово-паркове господарство</option>
+                            <option value="H4 Лісове господарство">H4 Лісове господарство</option>
+                            <option value="H5 Водні біоресурси та аквакультура">H5 Водні біоресурси та аквакультура</option>
+                            <option value="H6 Ветеринарна медицина">H6 Ветеринарна медицина</option>
+                            <option value="H7 Агроінженерія">H7 Агроінженерія</option>
+                        </optgroup>
+
+                        <optgroup label="J Транспорт та послуги">
+                            <option value="J1 Послуги краси">J1 Послуги краси</option>
+                            <option value="J2 Готельно-ресторанна справа та кейтеринг">J2 Готельно-ресторанна справа та кейтеринг</option>
+                            <option value="J3 Туризм і рекреація">J3 Туризм і рекреація</option>
+                            <option value="J4 Охорона праці">J4 Охорона праці</option>
+                            <option value="J5 Морський та внутрішній водний транспорт">J5 Морський та внутрішній водний транспорт</option>
+                            <option value="J6 Авіаційний транспорт">J6 Авіаційний транспорт</option>
+                            <option value="J7 Залізничний транспорт">J7 Залізничний транспорт</option>
+                            <option value="J8 Автомобільний транспорт">J8 Автомобільний транспорт</option>
+                        </optgroup>
+
+                        <optgroup label="K Безпека та оборона">
+                            <option value="K1 Державна безпека">K1 Державна безпека</option>
+                            <option value="K2 Безпека державного кордону">K2 Безпека державного кордону</option>
+                            <option value="K3 Національна безпека (за окремими сферами забезпечення і видами діяльності)">K3 Національна безпека (за окремими сферами забезпечення і видами діяльності)</option>
+                            <option value="K4 Управління інформаційною безпекою">K4 Управління інформаційною безпекою</option>
+                            <option value="K5 Військове управління (за видами збройних сил)">K5 Військове управління (за видами збройних сил)</option>
+                            <option value="K6 Забезпечення військ (сил)">K6 Забезпечення військ (сил)</option>
+                            <option value="K7 Озброєння та військова техніка">K7 Озброєння та військова техніка</option>
+                            <option value="K8 Пожежна безпека">K8 Пожежна безпека</option>
+                            <option value="K9 Правоохоронна діяльність">K9 Правоохоронна діяльність</option>
+                            <option value="K10 Цивільна безпека">K10 Цивільна безпека</option>
+                        </optgroup>
+                    </select>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input border-primary has-validation" id="consent" required>
+                        <label class="form-check-label" for="consent">Я погоджуюся з <a href="#" class="text-accent">політикою конфіденційності</a> та <a href="#" class="text-accent">умовами використання</a></label>
+                    </div>
+                    <button type="submit" class="btn-small btn-accent">Створити акаунт</button>
+                </form>
+                <div class="modal-footer justify-content-center">
+                    <p class="text-center">Уже маєте обліковий запис? <a class="text-primary text-decoration-underline text-accent" role="button" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Увійдіть у нього!</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer dark-section bg-secondary">
+        <div class="footer-top">
+            <div class="container px-4 px-md-0 py-5">
+                <a class="d-inline-block navbar-brand mb-5" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="/images/light-full-logotype.svg" alt="Логотип" />
+                </a>
+                <nav class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-gap-4">
+                    <div class="col">
+                        <p class="h5 mb-4">Навігація</p>
+                        <ul class="nav flex-column gap-2">
+                            <li>
+                                <a class="dark-nav-link" asp-area="" asp-controller="Home" asp-action="Index">Головна</a>
+                            </li>
+                            <li>
+                                <a class="dark-nav-link" asp-area="" asp-controller="Posts" asp-action="Index">Пости</a>
+                            </li>
+                            <li>
+                                <a class="dark-nav-link" asp-area="" asp-controller="Portfolio" asp-action="Index">Портфоліо</a>
+                            </li>
+                            <li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dark-nav-link" asp-area="" asp-controller="MyPortfolio" asp-action="Index">Моє портфоліо</a>
+                                }
+                                else
+                                {
+                                    <a class="dark-nav-link" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Моє портфоліо</a>
+                                }
+                            </li>
+                            <li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dark-nav-link" asp-area="" asp-controller="MyPosts" asp-action="Index">Мої пости</a>
+                                }
+                                else
+                                {
+                                    <a class="dark-nav-link" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Мої пости</a>
+                                }
+                            </li>
+                            <li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dark-nav-link" asp-area="" asp-controller="Settings" asp-action="Index">Налаштування</a>
+                                }
+                                else
+                                {
+                                    <a class="dark-nav-link" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Налаштування</a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <p class="h5 mb-4">Підтримка</p>
+                        <ul class="nav flex-column gap-2">
+                            <li>
+                                <a class="dark-nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="frequently-asked-questions">Часті питання</a>
+                            </li>
+                            <li>
+                                <a class="dark-nav-link" href="mailto:gukakiv@gmail.com">Написати е-листа</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <p class="h5 mb-4">Керування</p>
+                        <ul class="nav flex-column gap-2">
+                            <li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dark-nav-link" asp-area="" asp-controller="Settings" asp-action="Index">Налаштування</a>
+                                }
+                                else
+                                {
+                                    <a class="dark-nav-link" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Налаштування</a>
+                                }
+                            </li>
+                            <li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dark-nav-link" asp-area="" asp-controller="MyPortfolio" asp-action="Index">Моє портфоліо</a>
+                                }
+                                else
+                                {
+                                    <a class="dark-nav-link" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Моє портфоліо</a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container d-flex justify-content-between px-4 px-md-0 py-4">
+                <p class="text-start w-50">Усі права захищені © Яків Гук</p>
+                <p class="text-end w-50 text-capitalize"><a class="dark-nav-link" href="#">Умови використання</a> | <a class="dark-nav-link" href="#">Політика конфіденційності</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* Твій JS-скрипт прев'ю картинки + Скрипт автоматичного відкриття вікна при помилці *@
+    <script>
+
+        // Логіка перевідкриття модального вікна, якщо сервер повернув помилку
+        @if (TempData["OpenModal"] != null)
+        {
+            <text>
+                document.addEventListener("DOMContentLoaded", function () {
+                var modalId = "@TempData["OpenModal"]" === "login" ? "modularAuthorizationWindow" : "modularRegistrationWindow";
+                var modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                var myModal = new bootstrap.Modal(modalElement);
+                myModal.show();
+                }
+                });
+            </text>
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

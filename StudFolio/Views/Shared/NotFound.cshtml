@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Сторінку не знайдено | 404";
+    ViewData["Description"] = "Сторінку не знайдено через неправильне посилання або відмовлено в доступі.";
+    ViewData["Page"] = "error";
+    Layout = "_Layout";
+}
+
+<section class="container d-flex flex-column align-items-center justify-content-center py-5 my-5 gap-4 text-center" style="min-height: 60vh;">
+    <div class="error-illustration position-relative">
+        <h1 class="fw-bold text-primary m-0">404</h1>
+    </div>
+
+    <div class="error-message max-w-md" style="max-width: 480px;">
+        <h2 class="mb-2">Упс! Сторінку не знайдено</h2>
+        <p class="m-0">Здається, адреса, за якою ви перейшли, застаріла, була змінена або взагалі ніколи не існувала. Перевірте правильність посилання або скористайтеся кнопкою нижче.</p>
+    </div>
+
+    <div class="mt-2">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4 py-2 rounded-pill fw-medium text-decoration-none shadow-sm d-inline-flex align-items-center gap-2">
+            <span class="icon-home"></span> Повернутися на Головну
+        </a>
+    </div>
+</section>

@@ -1,0 +1,190 @@
+﻿@{
+    ViewData["Title"] = "StudFolio | Система електронного портфоліо студента";
+    ViewData["Description"] = "Платформа StudFolio пропонує прості та зручні інструменти для створення електронного портфоліо студента. Покажіть свої проєкти роботодавцям!";
+    ViewData["Page"] = "home";
+    ViewData["ActiveHomePage"] = "active";
+}
+<section class="hero-section py-5 d-flex justify-content-center align-items-center">
+    <div class="container d-flex flex-column gap-5">
+        <h1>
+            Настав час показати
+            свої <span class="text-accent">витвори</span> світові
+        </h1>
+        <div class="d-inline-flex my-auto gap-4 flex-column align-items-stretch d-md-flex flex-md-row">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="MyPortfolio" asp-action="Index" class="btn-big btn-accent">Створіть портфоліо мрії</a>
+            }
+            else
+            {
+                <a class="btn-big btn-accent" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Створіть портфоліо мрії</a>
+            }
+            
+            <a asp-controller="Portfolio" asp-action="Index" class="btn-big btn-outline-primary">Перегляньте портфоліо інших</a>
+        </div>
+    </div>
+</section>
+<section class="section-1 container d-flex flex-column align-items-center ps-5 gap-5">
+    <img src="~/images/presentation.png" alt="Macbook with our site" />
+    <h2 class="h2">Чому саме ми?</h2>
+    <div class="container-list-item d-flex flex-column align-items-center w-100">
+        <div class="way"></div>
+        <div class="d-flex flex-column position-relative list-item border-5 border-primary border bg-white w-100">
+            <div class="marker position-absolute d-flex row-gap-4 border-5 border-primary border justify-content-center align-items-center fs-1">1</div>
+            <h3 class="h3">Створення портфоліо не вимагає великих зусиль</h3>
+            <p>За допомогою гнучких інструментів та шаблонів редактора ви створите неймовірне портфоліо на нашій платформі. 
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="text-accent text-decoration-underline" asp-controller="MyPortfolio" asp-action="Index">Почніть прямо зараз!</a>
+                }
+                else
+                {
+                    <a class="text-accent text-decoration-underline" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Почніть прямо зараз!</a>
+                }
+            </p>
+        </div>
+        <div class="way"></div>
+        <div class="d-flex flex-column position-relative list-item-reverse border-5 border-primary border bg-white w-100">
+            <div class="marker position-absolute d-flex row-gap-4 border-5 border-primary border justify-content-center align-items-center fs-1">2</div>
+            <h3 class="h3">Перша мережа для публікації портфоліо</h3>
+            <p>Сервіс <span class="text-accent">StudFolio</span> дозволяє розміщувати портфоліо та окремі проєкти в мережу, які можуть переглядати та рецензувати інші.</p>
+        </div>
+        <div class="way"></div>
+        <div class="d-flex flex-column position-relative list-item border-5 border-primary border bg-white w-100">
+            <div class="marker position-absolute d-flex row-gap-4 border-5 border-primary border justify-content-center align-items-center fs-1">3</div>
+            <h3 class="h3">Роботодавці стежать за вами</h3>
+            <p>Ваші портфоліо та проєкти можуть привернути увагу роботодавців. Прагнете отримати роботу своєї професії? 
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="text-accent text-decoration-underline" asp-controller="MyPortfolio" asp-action="Index">Почніть вже зараз!</a>
+                }
+                else
+                {
+                    <a class="text-accent text-decoration-underline" role="button" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Почніть вже зараз!</a>
+                }
+            </p>
+        </div>
+        <div class="way"></div>
+    </div>
+</section>
+<section class="section-2 bg-secondary dark-section py-5">
+    <div class="container d-flex flex-column align-items-center gap-5">
+        <h2 class="h2">Ми досягаємо нових висот</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            <div class="col">
+                <div class="col-card d-flex flex-column justify-content-center align-items-center gap-4 pt-4 px-3 pb-3">
+                    <img src="/images/icon-1.svg" alt="Alternate Text" />
+                    <div class="d-flex flex-column align-items-center gap-1 text-center">
+                        <p class="fs-2">50 тис.</p>
+                        <p class="small-text">активних користувачів</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="col-card d-flex flex-column justify-content-center align-items-center gap-4 pt-4 px-3 pb-3">
+                    <img src="/images/icon-2.svg" alt="Alternate Text" />
+                    <div class="d-flex flex-column align-items-center gap-1 text-center">
+                        <p class="fs-2">150 тис.</p>
+                        <p class="small-text">створених портфоліо</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="col-card d-flex flex-column justify-content-center align-items-center gap-4 pt-4 px-3 pb-3">
+                    <img src="/images/icon-3.svg" alt="Alternate Text" />
+                    <div class="d-flex flex-column align-items-center gap-1 text-center">
+                        <p class="fs-2">655 тис.</p>
+                        <p class="small-text">створених постів</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="col-card d-flex flex-column justify-content-center align-items-center gap-4 pt-4 px-3 pb-3">
+                    <img src="/images/icon-4.svg" alt="Alternate Text" />
+                    <div class="d-flex flex-column align-items-center gap-1 text-center">
+                        <p class="fs-2">2 тис.</p>
+                        <p class="small-text">користувачів взято на роботу</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="frequently-asked-questions" class="section-4 container d-flex flex-column align-items-center py-5 gap-5">
+    <h2 class="h2 text-center">У вас є запитання?</h2>
+    <div class="d-flex flex-column flex-xl-row gap-4 align-items-lg-stretch w-100 w-100-l">
+        <div class="d-flex flex-column gap-4 accordion accordion-flush" id="accordionFlush">
+            <div class="accordion-item border border-5 border-primary">
+                <h3 class="accordion-header h4" id="flush-headingOne">
+                    <button class="accordion-button collapsed bg-white fw-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        Як створити портфоліо?
+                    </button>
+                </h3>
+                <div id="flush-collapseOne" class="accordion-collapse collapse bg-white" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlush">
+                    <div class="accordion-body">
+                        Перейдіть на сторінку "Моє портфоліо". З'явиться плитка "Додати преамбулу" натисніть на неї, щоб створити вступ у портфоліо. Після додавання преамбули з'явиться плитка "Додати секцію".
+                        Обираєте, яку секцію необхідно вставити, та зберігаєте портфоліо.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border border-5 border-primary">
+                <h3 class="accordion-header h4" id="flush-headingTwo">
+                    <button class="accordion-button collapsed bg-white fw-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                        Як створити пост?
+                    </button>
+                </h3>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse bg-white" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlush">
+                    <div class="accordion-body">
+                        Перейдіть на сторінку "Мої пости". Натисність на плитку "Додати пост". З'явиться форма, яку необхідно заповнити для додавання посту. Після заповнення обов'язково збережіть її!
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item  border border-5 border-primary">
+                <h3 class="accordion-header h4" id="flush-headingThree">
+                    <button class="accordion-button collapsed bg-white fw-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                        Як приховати своє портфоліо від інших?
+                    </button>
+                </h3>
+                <div id="flush-collapseThree" class="accordion-collapse collapse bg-white" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlush">
+                    <div class="accordion-body">
+                        Зайдіть у налаштування та виберіть вкладку "Портфоліо". Перемкніть перемикач "Відображати портфоліо у загальному списку". Тепер ніхто не зможе переглянути ваше портфоліо без дозволу.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item  border border-5 border-primary">
+                <h3 class="accordion-header h4" id="flush-headingFour">
+                    <button class="accordion-button collapsed bg-white fw-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseThree">
+                        Як видалити портфоліо? У редакторі його немає!
+                    </button>
+                </h3>
+                <div id="flush-collapseFour" class="accordion-collapse collapse bg-white" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlush">
+                    <div class="accordion-body">
+                        Чудове запитання! Перейдіть у налаштування та оберіть вкладку "Портфоліо". Після чого натисність кнопку "Видалити портфоліо" та підтвердіть свої наміри.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item  border border-5 border-primary">
+                <h3 class="accordion-header h4" id="flush-headingFive">
+                    <button class="accordion-button collapsed bg-white fw-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseThree">
+                        Що таке вбудовані посилання?
+                    </button>
+                </h3>
+                <div id="flush-collapseFive" class="accordion-collapse collapse bg-white" aria-labelledby="flush-headingFive" data-bs-parent="#accordionFlush">
+                    <div class="accordion-body">
+                        Це наша експериментальна функція, яка дозволяє вбудувати у ваш пост інший мініатюрний сайт. Скопіюйте на сайті спеціальне посилання (вбудоване) та вставте його в поле для вводу вбудованих посилань.
+                        Важливо, що звичайні посилання не підійдуть для цього! Обов'язково скористайтеся такою можливістю.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="side-card d-flex flex-column align-items-center flex-shrink-0 gap-4 bg-white border border-5 border-primary px-5 py-4">
+            <img class="w-100" src="~/images/сuriosity.svg" alt="Alternate Text" />
+            <h3 class="fw-bold text-center">Маєте ще запитання?</h3>
+            <p class=" text-center">Ми завжди раді вам допомогти! Напишіть нам своє запитання і ми на нього відповімо.</p>
+            <a class="btn-small btn-accent" href="mailto:gukakiv@gmail.com">Поставити запитання</a>
+        </div>
+    </div>
+</section>
