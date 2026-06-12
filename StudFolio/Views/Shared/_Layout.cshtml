@@ -61,7 +61,7 @@
                                         <li><a class="dropdown-item text-primary" asp-controller="MyPosts" asp-action="Index">Мої пости</a></li>
                                         <li><a class="dropdown-item text-primary" asp-controller="MyPortfolio" asp-action="Index">Моє портфоліо</a></li>
                                         <li><a class="dropdown-item text-primary" asp-controller="Settings" asp-action="Index">Налаштування</a></li>
-                                        @if (User.IsInRole("admin") || User.IsInRole("owner"))
+                                        @if (User.IsInRole("owner"))
                                             {
                                             <li><a class="dropdown-item text-primary" asp-controller="Statistics" asp-action="Index">Статистика</a></li>
                                             }
@@ -93,7 +93,7 @@
                                 <a class="text-primary nav-link @ViewData["ActiveSettingsPage"] " asp-controller="Settings" asp-action="Index">Налаштування</a>
                                 <span class="indicator"></span>
                             </li>
-                            @if (User.IsInRole("admin") || User.IsInRole("owner"))
+                            @if (User.IsInRole("owner"))
                                 {
                                     <li class="nav-item d-lg-none">
                                     <a class="text-primary nav-link @ViewData["ActiveAdminPage"] " asp-controller="Statistics" asp-action="Index">Статистика</a>
@@ -142,7 +142,7 @@
                     <button type="submit" class="btn-small btn-accent">Увійти</button>
                 </form>
                 <div class="modal-footer justify-content-center">
-                    <p class="text-center">Не маєте облікового запису? <a class="text-primary text-decoration-underline text-accent" role="button" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modularRegistrationWindow">Створіть його!</a></p>
+                    <p class="d-flex align-items-center column-gap-3 text-center">Не маєте облікового запису? <button class="text-primary text-decoration-underline text-accent btn btn-link p-0" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modularRegistrationWindow">Створіть його!</button></p>
                 </div>
             </div>
         </div>
@@ -345,7 +345,7 @@
                     <button type="submit" class="btn-small btn-accent">Створити акаунт</button>
                 </form>
                 <div class="modal-footer justify-content-center">
-                    <p class="text-center">Уже маєте обліковий запис? <a class="text-primary text-decoration-underline text-accent" role="button" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Увійдіть у нього!</a></p>
+                    <p class="d-flex align-items-center column-gap-3 text-center">Уже маєте обліковий запис? <button class="text-primary text-decoration-underline text-accent btn" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#modularAuthorizationWindow">Увійдіть у нього!</button></p>
                 </div>
             </div>
         </div>
@@ -413,7 +413,7 @@
                                 <a class="dark-nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="frequently-asked-questions">Часті питання</a>
                             </li>
                             <li>
-                                <a class="dark-nav-link" href="mailto:gukakiv@gmail.com">Написати е-листа</a>
+                                <a class="dark-nav-link" href="mailto:support@studfolio.if.ua">Написати е-листа</a>
                             </li>
                         </ul>
                     </div>
