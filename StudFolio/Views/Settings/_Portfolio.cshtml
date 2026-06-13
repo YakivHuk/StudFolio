@@ -18,11 +18,11 @@
 
     <form asp-controller="Settings" asp-action="DeletePortfolio" method="post" id="deletePortfolioForm">
         @Html.AntiForgeryToken()
-        <div class="modal fade" id="deletePortfolioModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="deletePortfolioModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <p class="modal-title text-primary fs-5" id="modalLabel">Видалення портфоліо</p>
+                        <p class="modal-title text-primary fs-5">Видалення портфоліо</p>
                         <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити">
                             <span class="icon-dagger"></span>
                         </button>

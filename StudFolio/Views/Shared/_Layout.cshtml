@@ -10,6 +10,17 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StudFolio.styles.css" asp-append-version="true" />
+
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="@ViewData["Description"]" />
+    <meta property="og:image" content="https://studfolio.if.ua/images/full-logo.png" />
+    <meta property="og:url" content="https://studfolio.if.ua" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData["Title"]" />
+    <meta name="twitter:description" content="@ViewData["Description"]" />
+    <meta name="twitter:image" content="https://studfolio.if.ua/images/full-logo.png" />
 </head>
 <body class="@ViewData["Page"]">
     <header class="header">
@@ -112,11 +123,11 @@
     </header>
 
     @* --- МОДАЛЬНЕ ВІКНО АВТОРИЗАЦІЇ --- *@
-    <div class="modal fade" id="modularAuthorizationWindow" tabindex="-1" aria-labelledby="modularAuthorizationWindowLabel" aria-hidden="true">
+    <div class="modal fade" id="modularAuthorizationWindow" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <p class="modal-title fs-5" id="modularAuthorizationWindowLabel">Увійти в StudFolio</p>
+                    <p class="modal-title fs-5">Увійти в StudFolio</p>
                     <button type="button" class="btn-icon" data-bs-dismiss="modal" aria-label="Закрити"><span class="icon-dagger"></span></button>
                 </div>
                 <form asp-controller="Account" asp-action="Login" method="post" class="modal-body d-flex flex-column align-items-center row-gap-4 needs-validation" novalidate>
@@ -149,7 +160,7 @@
     </div>
 
     @* --- МОДАЛЬНЕ ВІКНО РЕЄСТРАЦІЇ --- *@
-    <div class="modal fade" id="modularRegistrationWindow" tabindex="-1" aria-labelledby="modularRegistrationWindowLabel" aria-hidden="true">
+    <div class="modal fade" id="modularRegistrationWindow" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
