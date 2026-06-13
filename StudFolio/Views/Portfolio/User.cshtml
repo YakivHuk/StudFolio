@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = $"Портфоліо | {Model.User!.Firstname} {Model.User.Lastname}";
     ViewData["Page"] = "personal-portfolio";
+    ViewData["Title"] = "Каталог студентських портфоліо | StudFolio";
+    ViewData["Description"] = $"Електронне портфоліо студента {Model.User!.Firstname} {Model.User.Lastname} за спеціальністю {Model.User.Specialty}";
 }
 
 <div class="portfolio-container">

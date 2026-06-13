@@ -13372,7 +13372,7 @@ h4, .h4, h5, .h5, h6, .h6, p, label, .form-floating > label, select {
   column-gap: 1rem;
 }
 .buttons [class*=btn] {
-  aspect-ratio: none;
+  aspect-ratio: auto;
   flex-grow: 1;
 }
 
@@ -13713,12 +13713,16 @@ h4, .h4, h5, .h5, h6, .h6, p, label, .form-floating > label, select {
 .card .card-img-top, .my-posts .section-1 .new-post .card-img-top {
   width: 100%;
   aspect-ratio: 1960/1080;
+  object-fit: cover;
+  object-position: center;
 }
 .portfolio .card .card-img-top, .portfolio .my-posts .section-1 .new-post .card-img-top, .my-posts .section-1 .portfolio .new-post .card-img-top {
   width: auto;
   height: 100px;
   aspect-ratio: 1/1;
   margin: 1rem auto 0;
+  object-fit: cover;
+  object-position: center;
 }
 
 .card .card-body, .my-posts .section-1 .new-post .card-body {
@@ -13754,6 +13758,8 @@ h4, .h4, h5, .h5, h6, .h6, p, label, .form-floating > label, select {
   aspect-ratio: 1960/1080;
   width: 100%;
   border-radius: 1rem;
+  object-fit: cover;
+  object-position: center;
 }
 
 .my-posts .section-1 .card .card-body, .my-posts .section-1 .new-post .card-body {

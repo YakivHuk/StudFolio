@@ -20,7 +20,7 @@ namespace StudFolio.Data
                     Lastname = "Система",
                     Firstname = "StudFolio",
                     Email = "support@studfolio.if.ua",
-                    Avatar = "favicon.svg",
+                    Avatar = "/favicon.svg",
                     Role = "owner",
                     CreationTime = DateTime.UtcNow
                 };

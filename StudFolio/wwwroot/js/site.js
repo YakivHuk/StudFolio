@@ -421,7 +421,7 @@ document.addEventListener("click", (e) => {
 const portfolioContainer = document.getElementById("portfolioContainer")
 
 const modalHTML = `
-<div class="modal fade" id="sectionSelectionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade" id="sectionSelectionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -485,7 +485,6 @@ function createPortfolioSection(plugBlock, plugName) {
                     specialtyInput.textContent = data.specialty;
                     specialtyInput.classList.remove("plug-card");
                 } else {
-                    specialtyInput.textContent = "Натисніть, щоб обрати спеціальність";
                     specialtyInput.classList.add("plug-card");
                 }
 
@@ -494,7 +493,6 @@ function createPortfolioSection(plugBlock, plugName) {
                     eduInput.textContent = data.education;
                     eduInput.classList.remove("plug-card");
                 } else {
-                    eduInput.textContent = "Введіть назву закладу освіти...";
                     eduInput.classList.add("plug-card");
                 }
             })
@@ -516,7 +514,7 @@ function createPortfolioSection(plugBlock, plugName) {
 
             if (!specialtySelectionModal) {
                 document.body.insertAdjacentHTML('beforeend', `
-                    <div class="modal fade" id="specialtySelectionModal" tabindex="-1" aria-labelledby="specialtySelectionModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="specialtySelectionModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -890,13 +888,25 @@ function applySectionType(plugBlock, type) {
     }
 }
 
-function addPlugBlock(plugName) {
+/*function addPlugBlock(plugName) {
     const plugBlock = document.createElement("section");
     plugBlock.classList.add(plugName);
     portfolioContainer.appendChild(plugBlock);
 
     plugBlock.addEventListener("click", () => {
         createPortfolioSection(plugBlock, plugName);
+    }, { once: true });
+}*/
+
+function addPlugBlock(plugName) {
+    const plugBlock = document.createElement("section");
+    plugBlock.classList.add(plugName);
+    portfolioContainer.appendChild(plugBlock);
+
+    plugBlock.addEventListener("click", () => {
+        if (plugBlock.classList.contains("plug-add-section") || plugBlock.classList.contains("plug-add-preamble")) {
+            createPortfolioSection(plugBlock, plugName);
+        }
     });
 }
 
@@ -954,14 +964,10 @@ function showPortfolioConfirm(title, message, actionText, onConfirmCallback) {
 // =========================================================================
 // ІНІЦІАЛІЗАЦІЯ ТА КЕРУВАННЯ КОНСТРУКТОРОМ ПОРТФОЛІО
 // =========================================================================
-
 if (portfolioContainer) {
 
     // --- ДЕЛЕГУВАННЯ ПОДІЙ ДЛЯ ЗБЕРЕЖЕНОГО В БД ПОРТФОЛІО ---
     portfolioContainer.addEventListener("click", (e) => {
-        // СТРОГИЙ ЗАХИСТ: Цей обробник активний ТІЛЬКИ в конструкторі користувача "Моє портфоліо"
-        if (!document.getElementById("btnSavePortfolio")) return;
-
         const card = e.target.closest(".portfolio-post-card-preview");
         if (card) {
             const postId = card.getAttribute("data-post-id");
@@ -1043,6 +1049,9 @@ if (btnSavePortfolio) {
 
         const sections = clone.querySelectorAll(".portfolio-section, .section-block, fieldset, section");
         sections.forEach(section => {
+            if (section.classList.contains("portfolio-preamble-section")) {
+                return;
+            }
             const headingEl = section.querySelector(".section-title, h1, h2, h3, h4, h5, h6");
             const headingText = headingEl ? headingEl.textContent.trim() : "";
             const hasRealPosts = section.querySelectorAll(".portfolio-post-card-preview").length > 0;
@@ -1057,17 +1066,19 @@ if (btnSavePortfolio) {
             }
         });
 
-        clone.querySelectorAll("[contenteditable]").forEach(el => {
+        clone.querySelectorAll(".plug-card").forEach(el => {
             el.removeAttribute("contenteditable");
             el.classList.remove("plug-card");
         });
 
-        const cleanedHtml = clone.innerHTML.trim();
+        const contentSections = clone.querySelectorAll("section:not(.portfolio-preamble-section)");
 
-        if (!cleanedHtml || cleanedHtml === "") {
-            showPortfolioAlert("Увага", "Неможливо зберегти порожнє портфоліо! Додайте хоча б одну повністю заповнену секцію (із заголовком та вмістом).");
+        if (contentSections.length === 0) {
+            showPortfolioAlert("Увага", "Неможливо зберегти портфоліо! Додайте хоча б одну повністю заповнену секцію (Розповідь, Список постів або Пост) окрім основної преамбули.");
             return;
         }
+
+        const cleanedHtml = clone.innerHTML.trim();
 
         const formData = new FormData();
         formData.append("content", cleanedHtml);
@@ -1161,7 +1172,7 @@ function openGlobalPostModal(postId) {
         });
 }
 
-//---
+//-----
 document.addEventListener("DOMContentLoaded", () => {
     const mainFilterForm = document.getElementById("mainFilterForm");
     const resetFiltersBtn = document.getElementById("resetFiltersBtn");
@@ -1306,19 +1317,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-
-//-----
-
-// Перевірка рядка адреси (URL) під час завантаження сторінки
-/*document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const postIdFromUrl = urlParams.get('post');
-
-    // Якщо в адресі знайдено ?post=число, автоматично викликаємо вікно
-    if (postIdFromUrl) {
-        openGlobalPostModal(postIdFromUrl);
-    }
-});*/
 
 // =========================================================================
 // 1. Обробка навігації в лівому меню налаштувань
