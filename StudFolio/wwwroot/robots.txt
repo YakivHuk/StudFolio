@@ -1,12 +1,7 @@
-User-agent: *
-Disallow: /statistics/      
-Disallow: /statistics
-Disallow: /settings/        
-Disallow: /settings
-Disallow: /myposts/         
+User-agent: *     
+Disallow: /statistics      
+Disallow: /settings     
 Disallow: /myposts
-Disallow: /myportfolio/     
 Disallow: /myportfolio
-Allow: /
-
-Sitemap: https://studfolio.if.ua/sitemap.xml
+Disallow: /404
+Sitemap: https://www.studfolio.if.ua/sitemap.xml

@@ -1066,7 +1066,7 @@ if (btnSavePortfolio) {
             }
         });
 
-        clone.querySelectorAll(".plug-card").forEach(el => {
+        clone.querySelectorAll("[contenteditable]").forEach(el => {
             el.removeAttribute("contenteditable");
             el.classList.remove("plug-card");
         });

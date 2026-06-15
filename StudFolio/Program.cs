@@ -12,10 +12,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";   
-        options.LogoutPath = "/Account/Logout";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7); 
+        // Для системних шляхів куки авторизації краще теж використовувати малі літери
+        options.LoginPath = "/account/login";
+        options.LogoutPath = "/account/logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
+
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+    options.AppendTrailingSlash = false;
+});
 
 var app = builder.Build();
 
@@ -29,37 +36,66 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
+        // Логування помилки за потреби
     }
 }
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/home/error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+// --- ВЛАСНИЙ MIDDLEWARE ДЛЯ SEO-РЕДИРЕКТІВ (НИЖНІЙ РЕГІСТР ТА СЛЕШІ) ---
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+
+    // Ігноруємо перевірку для статичних файлів, щоб не ламати MapStaticAssets
+    if (!string.IsNullOrEmpty(path) && !path.Contains('.') && !path.StartsWith("/_"))
+    {
+        bool hasUppercase = path.Any(char.IsUpper);
+        bool hasTrailingSlash = path.Length > 1 && path.EndsWith('/');
+
+        if (hasUppercase || hasTrailingSlash)
+        {
+            var newPath = path.ToLowerInvariant();
+            if (hasTrailingSlash)
+            {
+                newPath = newPath.TrimEnd('/');
+            }
+
+            // Формуємо новий URL з QueryString (якщо є параметри, наприклад ?id=5)
+            var newUrl = newPath + context.Request.QueryString;
+
+            context.Response.StatusCode = StatusCodes.Status301MovedPermanently;
+            context.Response.Headers.Location = newUrl;
+            return; // Перериваємо конвеєр і відправляємо 301 редирект
+        }
+    }
+
+    await next();
+});
 
 // Кастомний аналог обробки 404 помилки
 app.Use(async (context, next) =>
 {
     await next();
 
-    // Якщо конвеєр повернув 404 і відповідь користувачу ще не почала відправлятися
     if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
     {
-        // Змінюємо шлях запиту на твій екшен помилки і виконуємо конвеєр знову
-        context.Request.Path = "/Home/Error404";
+        context.Request.Path = "/home/error404";
         await next();
     }
 });
 
 app.MapStaticAssets();
-
 app.UseStaticFiles();
 
-app.UseRouting(); // Маршрутизація іде після статичних файлів та статус-кодів
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
